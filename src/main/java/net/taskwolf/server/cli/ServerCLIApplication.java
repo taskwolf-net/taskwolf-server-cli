@@ -5,6 +5,7 @@ import com.google.inject.Injector;
 import net.taskwolf.server.cli.command.Command;
 import net.taskwolf.server.cli.command.CommandRegistry;
 import net.taskwolf.server.cli.command.implementation.HelpCommand;
+import net.taskwolf.server.cli.command.implementation.LoginCommand;
 
 public class ServerCLIApplication {
   public static void main(String[] args) throws Exception {
@@ -18,6 +19,7 @@ public class ServerCLIApplication {
     CommandRegistry registry, Injector injector
   ) {
     registry.register(injector.getInstance(HelpCommand.class));
+    registry.register(injector.getInstance(LoginCommand.class));
   }
 
   private static void processCommand(
