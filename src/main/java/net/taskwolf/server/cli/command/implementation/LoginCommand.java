@@ -46,7 +46,6 @@ public final class LoginCommand extends Command {
     var requestBuilder = HttpRequest.newBuilder().uri(URI.create(VERIFICATION_LOGIN_URL))
       .POST(HttpRequest.BodyPublishers.ofString(requestBody.toString()))
       .setHeader("Content-Type", "application/json")
-      .setHeader("WHITELIST-KEY", "tOrTylordsMeMBiTyLATONTERipLOusiNVOloRyPORKBOScoCk")
       .build();
     var response = httpClient.send(requestBuilder, HttpResponse.BodyHandlers.ofString());
     if (response.statusCode() != 200) {
@@ -64,20 +63,27 @@ public final class LoginCommand extends Command {
         "entered was incorrect.");
       return;
     }
-    var deviceConfiguration = DeviceConfiguration.createAndLoad();
-    var localDeviceId = deviceConfiguration.deviceId() == null ?
-      UUID.randomUUID().toString() : deviceConfiguration.deviceId();
-    var requestBody = new JSONObject(Map.of("device", localDeviceId, "information",
-      InetAddress.getLocalHost().getHostName(), "platform", "LINUX"));
+    var localDeviceId = findLocalDeviceId();
+    var requestBody = findDeviceInformation(localDeviceId).toString();
     var requestBuilder = HttpRequest.newBuilder().uri(URI.create(DEVICE_LOGIN_URL))
-      .POST(HttpRequest.BodyPublishers.ofString(requestBody.toString()))
+      .POST(HttpRequest.BodyPublishers.ofString(requestBody))
       .setHeader("Content-Type", "application/json")
       .setHeader("Authorization", "Bearer " + apiKey.get())
-      .setHeader("WHITELIST-KEY", "tOrTylordsMeMBiTyLATONTERipLOusiNVOloRyPORKBOScoCk")
       .build();
     var response = httpClient.send(requestBuilder, HttpResponse.BodyHandlers.ofString());
     var decentralizedDeviceId = new JSONObject(response.body()).getString("id");
     finishLogin(apiKey.get(), localDeviceId, decentralizedDeviceId);
+  }
+
+  private JSONObject findDeviceInformation(String localDeviceId) throws Exception {
+    return new JSONObject(Map.of("device", localDeviceId, "information",
+      InetAddress.getLocalHost().getHostName(), "platform", "LINUX"));
+  }
+
+  private String findLocalDeviceId() throws Exception {
+    var deviceConfiguration = DeviceConfiguration.createAndLoad();
+    return deviceConfiguration.deviceId() == null ?
+      UUID.randomUUID().toString() : deviceConfiguration.deviceId();
   }
 
   private void finishLogin(
