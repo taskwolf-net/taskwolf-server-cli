@@ -6,9 +6,15 @@ import net.taskwolf.server.cli.command.Command;
 import net.taskwolf.server.cli.command.CommandRegistry;
 import net.taskwolf.server.cli.command.implementation.HelpCommand;
 import net.taskwolf.server.cli.command.implementation.LoginCommand;
+import net.taskwolf.server.cli.command.implementation.LogoutCommand;
+
+import java.io.File;
 
 public class ServerCLIApplication {
   public static void main(String[] args) throws Exception {
+    if (!checkPermission()) {
+      return;
+    }
     var injector = Guice.createInjector(ServerCLIInjectionModule.create());
     var commandRegistry = injector.getInstance(CommandRegistry.class);
     registerCommands(commandRegistry, injector);
@@ -20,6 +26,7 @@ public class ServerCLIApplication {
   ) {
     registry.register(injector.getInstance(HelpCommand.class));
     registry.register(injector.getInstance(LoginCommand.class));
+    registry.register(injector.getInstance(LogoutCommand.class));
   }
 
   private static void processCommand(
@@ -55,5 +62,15 @@ public class ServerCLIApplication {
       syntax.append(arguments[i]).append(i != arguments.length - 1 ? " / " : " ");
     }
     System.out.println(syntax);
+  }
+
+  private static boolean checkPermission() {
+    var file = new File("/etc/taskwolf/test");
+    if (!file.mkdirs()) {
+      System.out.println("Permission denied.");
+      return false;
+    }
+    file.delete();
+    return true;
   }
 }
