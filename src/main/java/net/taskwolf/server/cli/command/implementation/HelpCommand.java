@@ -8,7 +8,7 @@ import net.taskwolf.server.cli.command.Command;
 public final class HelpCommand extends Command {
   @Inject
   private HelpCommand() {
-    super("help", new String[] {"info", "commands"}, new String[0]);
+    super("help", new String[] {"info"}, new String[0]);
   }
 
   @Override
