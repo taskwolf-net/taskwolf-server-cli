@@ -7,6 +7,7 @@ import net.taskwolf.server.cli.command.CommandRegistry;
 import net.taskwolf.server.cli.command.implementation.HelpCommand;
 import net.taskwolf.server.cli.command.implementation.LoginCommand;
 import net.taskwolf.server.cli.command.implementation.LogoutCommand;
+import net.taskwolf.server.cli.command.implementation.WorkspaceCommand;
 
 import java.io.File;
 
@@ -27,6 +28,7 @@ public class ServerCLIApplication {
     registry.register(injector.getInstance(HelpCommand.class));
     registry.register(injector.getInstance(LoginCommand.class));
     registry.register(injector.getInstance(LogoutCommand.class));
+    registry.register(injector.getInstance(WorkspaceCommand.class));
   }
 
   private static void processCommand(
