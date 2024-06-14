@@ -5,13 +5,11 @@ import com.google.inject.Singleton;
 import net.taskwolf.server.cli.command.Command;
 import net.taskwolf.server.cli.credential.CredentialConfiguration;
 import net.taskwolf.server.cli.device.DeviceConfiguration;
+import net.taskwolf.server.cli.request.TaskwolfRequest;
 import org.json.JSONObject;
 
 import java.net.InetAddress;
-import java.net.URI;
 import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -43,11 +41,8 @@ public final class LoginCommand extends Command {
     String email, String password
   ) throws Exception {
     var requestBody = new JSONObject(Map.of("email", email, "password", password));
-    var requestBuilder = HttpRequest.newBuilder().uri(URI.create(VERIFICATION_LOGIN_URL))
-      .POST(HttpRequest.BodyPublishers.ofString(requestBody.toString()))
-      .setHeader("Content-Type", "application/json")
-      .build();
-    var response = httpClient.send(requestBuilder, HttpResponse.BodyHandlers.ofString());
+    var response = TaskwolfRequest.create(VERIFICATION_LOGIN_URL, "POST", requestBody)
+      .sendUnauthorized();
     if (response.statusCode() != 200) {
       return Optional.empty();
     }
@@ -64,13 +59,8 @@ public final class LoginCommand extends Command {
       return;
     }
     var localDeviceId = findLocalDeviceId();
-    var requestBody = findDeviceInformation(localDeviceId).toString();
-    var requestBuilder = HttpRequest.newBuilder().uri(URI.create(DEVICE_LOGIN_URL))
-      .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-      .setHeader("Content-Type", "application/json")
-      .setHeader("Authorization", "Bearer " + apiKey.get())
-      .build();
-    var response = httpClient.send(requestBuilder, HttpResponse.BodyHandlers.ofString());
+    var response = TaskwolfRequest.create(DEVICE_LOGIN_URL, "POST",
+      findDeviceInformation(localDeviceId)).sendAuthorized(apiKey.get());
     var decentralizedDeviceId = new JSONObject(response.body()).getString("id");
     finishLogin(apiKey.get(), localDeviceId, decentralizedDeviceId);
   }
