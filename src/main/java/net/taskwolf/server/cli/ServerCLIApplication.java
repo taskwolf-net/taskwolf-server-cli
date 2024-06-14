@@ -27,6 +27,7 @@ public class ServerCLIApplication {
     registry.register(injector.getInstance(LoginCommand.class));
     registry.register(injector.getInstance(LogoutCommand.class));
     registry.register(injector.getInstance(CommandCommand.class));
+    registry.register(injector.getInstance(FileCommand.class));
     registry.register(injector.getInstance(WorkspaceCommand.class));
   }
 
