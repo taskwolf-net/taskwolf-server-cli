@@ -4,10 +4,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import net.taskwolf.server.cli.command.Command;
 import net.taskwolf.server.cli.command.CommandRegistry;
-import net.taskwolf.server.cli.command.implementation.HelpCommand;
-import net.taskwolf.server.cli.command.implementation.LoginCommand;
-import net.taskwolf.server.cli.command.implementation.LogoutCommand;
-import net.taskwolf.server.cli.command.implementation.WorkspaceCommand;
+import net.taskwolf.server.cli.command.implementation.*;
 
 import java.io.File;
 
@@ -25,6 +22,7 @@ public class ServerCLIApplication {
   private static void registerCommands(
     CommandRegistry registry, Injector injector
   ) {
+    registry.register(injector.getInstance(VersionCommand.class));
     registry.register(injector.getInstance(HelpCommand.class));
     registry.register(injector.getInstance(LoginCommand.class));
     registry.register(injector.getInstance(LogoutCommand.class));
