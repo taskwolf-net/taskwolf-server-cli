@@ -41,7 +41,8 @@ public final class WorkspaceCommand extends Command {
   private boolean listWorkspaces() throws Exception {
     var credentials = CredentialConfiguration.createAndLoad();
     if (!credentials.exists()) {
-      System.out.println("For this reason, you cannot execute the command.");
+      System.out.println("You are not logged in. For this reason, you cannot " +
+        "execute the command.");
       return true;
     }
     var requestBody = Map.of("device", credentials.device());
@@ -69,7 +70,8 @@ public final class WorkspaceCommand extends Command {
     var path = arguments[1];
     var credentials = CredentialConfiguration.createAndLoad();
     if (!credentials.exists()) {
-      System.out.println("For this reason, you cannot execute the command.");
+      System.out.println("You are not logged in. For this reason, you cannot " +
+        "execute the command.");
       return true;
     }
     var requestBody = Map.of("device", credentials.device(), "path", path);
@@ -89,7 +91,8 @@ public final class WorkspaceCommand extends Command {
     var path = arguments[1];
     var credentials = CredentialConfiguration.createAndLoad();
     if (!credentials.exists()) {
-      System.out.println("For this reason, you cannot execute the command.");
+      System.out.println("You are not logged in. For this reason, you cannot " +
+        "execute the command.");
       return true;
     }
     var target = findTargetWorkspace(credentials, path);

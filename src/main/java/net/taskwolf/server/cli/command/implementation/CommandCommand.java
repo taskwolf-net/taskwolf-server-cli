@@ -40,7 +40,8 @@ public final class CommandCommand extends Command {
     }
     var credentials = CredentialConfiguration.createAndLoad();
     if (!credentials.exists()) {
-      System.out.println("For this reason, you cannot execute the command.");
+      System.out.println("You are not logged in. For this reason, you cannot " +
+        "execute the command.");
       return true;
     }
     var requestBody = Map.of("device", credentials.device(),
