@@ -21,6 +21,7 @@ public final class HelpCommand extends Command {
     System.out.println("  version");
     System.out.println("  login");
     System.out.println("  logout");
+    System.out.println("  organization");
     System.out.println("  command");
     System.out.println("  file");
     System.out.println("  workspace");
