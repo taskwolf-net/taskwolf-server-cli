@@ -9,15 +9,12 @@ import net.taskwolf.server.cli.request.TaskwolfRequest;
 import org.json.JSONObject;
 
 import java.net.InetAddress;
-import java.net.http.HttpClient;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 @Singleton
 public final class LoginCommand extends Command {
-  private final HttpClient httpClient = HttpClient.newHttpClient();
-
   @Inject
   private LoginCommand() {
     super("login", new String[0], new String[0]);
