@@ -67,7 +67,7 @@ public class ServerCLIApplication {
   }
 
   private static boolean checkPermission() {
-    var file = new File("/etc/taskwolf/test");
+    var file = new File("/usr/local/taskwolf/test");
     if (!file.mkdirs()) {
       System.out.println("Permission denied.");
       return false;

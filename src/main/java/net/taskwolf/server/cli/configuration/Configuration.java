@@ -78,6 +78,6 @@ public abstract class Configuration {
   }
 
   private String absolutePath() {
-    return "/etc/taskwolf/" + path;
+    return "/usr/local/taskwolf/" + path;
   }
 }
