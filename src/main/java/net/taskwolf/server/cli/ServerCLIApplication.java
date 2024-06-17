@@ -30,6 +30,7 @@ public class ServerCLIApplication {
     registry.register(injector.getInstance(CommandCommand.class));
     registry.register(injector.getInstance(FileCommand.class));
     registry.register(injector.getInstance(WorkspaceCommand.class));
+    registry.register(injector.getInstance(DeleteCommand.class));
   }
 
   private static void processCommand(
