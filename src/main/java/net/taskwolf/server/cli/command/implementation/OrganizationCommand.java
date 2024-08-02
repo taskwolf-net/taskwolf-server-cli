@@ -38,9 +38,6 @@ public final class OrganizationCommand extends Command {
     return false;
   }
 
-  private static final String DEVICE_ORGANIZATION_LIST_URL =
-    "https://api.taskwolf.net/v1/device/organizations/";
-
   private boolean listOrganizations() throws Exception {
     var credentials = CredentialConfiguration.createAndLoad();
     if (!credentials.exists()) {
@@ -48,15 +45,12 @@ public final class OrganizationCommand extends Command {
         "execute the command.");
       return true;
     }
-    var requestBody = Map.of("device", credentials.device());
-    var response = TaskwolfRequest.create(DEVICE_ORGANIZATION_LIST_URL, "POST",
-      new JSONObject(requestBody)).sendAuthorized(credentials.token());
-    var organizations = new JSONObject(response.body()).getJSONArray("organizations");
+    var organizations = findDeviceUsers(credentials);
     if (organizations.isEmpty()) {
       System.out.println("The device has not yet been released for any organization.");
       return true;
     }
-    System.out.println("Organizations (" + organizations.length() + ")");
+    System.out.println("Organizations (" + organizations.size() + ")");
     for (var workspace : organizations) {
       System.out.println(" - " + ((JSONObject) workspace).getString("name"));
     }
@@ -77,8 +71,7 @@ public final class OrganizationCommand extends Command {
       if (organizationIndex < 1 || organizationIndex > organizations.size()) {
         throw new Exception();
       }
-      addorganization(((HashMap<String, String>)
-        organizations.get(organizationIndex - 1)).get("id"));
+      addOrganization(organizations.get(organizationIndex - 1).get("id"));
       System.out.println("The addition was successful. The device is now " +
         "available to the organization.");
     } catch (Exception exception) {
@@ -90,7 +83,7 @@ public final class OrganizationCommand extends Command {
   private static final String ORGANIZATION_ADD_URL =
     "https://api.taskwolf.net/v1/device/organization/add/";
 
-  private void addorganization(String organizationId) throws Exception {
+  private void addOrganization(String organizationId) throws Exception {
     var credentials = CredentialConfiguration.createAndLoad();
     var requestBody = Map.of("device", credentials.device(),
       "organization", organizationId);
@@ -98,10 +91,7 @@ public final class OrganizationCommand extends Command {
       new JSONObject(requestBody)).sendAuthorized(credentials.token());
   }
 
-  private static final String ALL_ORGANIZATION_LIST_URL =
-    "https://api.taskwolf.net/v1/organizations/all/";
-
-  private List<Object> displayAvailableAddableOrganizations() throws Exception {
+  private List<Map<String, String>> displayAvailableAddableOrganizations() throws Exception {
     var credentials = CredentialConfiguration.createAndLoad();
     if (!credentials.exists()) {
       System.out.println("You are not logged in. For this reason, you cannot " +
@@ -117,29 +107,20 @@ public final class OrganizationCommand extends Command {
     }
     System.out.println("Organizations (" + organizations.size() + ")");
     for (var i = 0; i < organizations.size(); i++) {
-      var organizationName = ((HashMap<String, String>) organizations.get(i))
-        .get("name");
+      var organizationName = organizations.get(i).get("name");
       System.out.println(" " + (i + 1) + " " + organizationName);
     }
     return organizations;
   }
 
-  private List<Object> findAvailableOrganizations(
+  private List<Map<String, String>> findAvailableOrganizations(
     CredentialConfiguration credentials
   ) throws Exception {
-    var allOrganizationsResponse = TaskwolfRequest.create(ALL_ORGANIZATION_LIST_URL,
-      "GET", new JSONObject("{}")).sendAuthorized(credentials.token());
-    var organizations = new JSONObject(allOrganizationsResponse.body())
-      .getJSONArray("organizations").toList();
-    var deviceOrganizationsResponse = TaskwolfRequest.create(DEVICE_ORGANIZATION_LIST_URL,
-        "POST", new JSONObject(Map.of("device", credentials.device())))
-      .sendAuthorized(credentials.token());
-    var deviceOrganizations = new JSONObject(deviceOrganizationsResponse.body())
-      .getJSONArray("organizations").toList();
-    organizations = organizations.stream().filter(organization ->
-      deviceOrganizations.stream().noneMatch(deviceOrganization ->
-        ((HashMap<String, String>) organization).get("id")
-          .equals(((HashMap<String, String>) deviceOrganization).get("id"))))
+    var organizations = findAllOrganizations(credentials);
+    var deviceUsers = findDeviceUsers(credentials);
+    organizations = organizations.stream()
+      .filter(organization -> deviceUsers.stream().noneMatch(deviceOrganization ->
+        organization.get("id").equals(deviceOrganization.get("id"))))
       .collect(Collectors.toList());
     return organizations;
   }
@@ -158,8 +139,7 @@ public final class OrganizationCommand extends Command {
       if (organizationIndex < 1 || organizationIndex > organizations.size()) {
         throw new Exception();
       }
-      removeOrganization(((HashMap<String, String>)
-        organizations.get(organizationIndex - 1)).get("id"));
+      removeOrganization(organizations.get(organizationIndex - 1).get("id"));
       System.out.println("The removal was successful. The device is no " +
         "longer available to the organization.");
     } catch (Exception exception) {
@@ -179,28 +159,52 @@ public final class OrganizationCommand extends Command {
       new JSONObject(requestBody)).sendAuthorized(credentials.token());
   }
 
-  private List<Object> displayAvailableRemovableOrganizations() throws Exception {
+  private List<Map<String, String>> displayAvailableRemovableOrganizations() throws Exception {
     var credentials = CredentialConfiguration.createAndLoad();
     if (!credentials.exists()) {
       System.out.println("You are not logged in. For this reason, you cannot " +
         "execute the command.");
       return Lists.newArrayList();
     }
-    var requestBody = Map.of("device", credentials.device());
-    var response = TaskwolfRequest.create(DEVICE_ORGANIZATION_LIST_URL, "POST",
-      new JSONObject(requestBody)).sendAuthorized(credentials.token());
-    var organizations = new JSONObject(response.body())
-      .getJSONArray("organizations").toList();
+    var organizations = findAllOrganizations(credentials);
     if (organizations.isEmpty()) {
       System.out.println("The device has not yet been released for any organization.");
       return Lists.newArrayList();
     }
     System.out.println("Organizations (" + organizations.size() + ")");
     for (var i = 0; i < organizations.size(); i++) {
-      var organizationName = ((HashMap<String, String>) organizations.get(i))
-        .get("name");
+      var organizationName = organizations.get(i).get("name");
       System.out.println(" " + (i + 1) + " " + organizationName);
     }
     return organizations;
+  }
+
+  private static final String DEVICE_USER_LIST_URL =
+    "https://api.taskwolf.net/v1/device/organizations/";
+
+  private List<Map<String, String>> findDeviceUsers(
+    CredentialConfiguration credentials
+  ) throws Exception {
+    var deviceOrganizationsResponse = TaskwolfRequest.create(DEVICE_USER_LIST_URL,
+        "POST", new JSONObject(Map.of("device", credentials.device())))
+      .sendAuthorized(credentials.token());
+    return new JSONObject(deviceOrganizationsResponse.body())
+      .getJSONArray("organizations").toList().stream()
+      .map(organization -> (Map<String, String>) organization)
+      .collect(Collectors.toList());
+  }
+
+  private static final String ALL_ORGANIZATION_LIST_URL =
+    "https://api.taskwolf.net/v1/organizations/all/";
+
+  private List<Map<String, String>> findAllOrganizations(
+    CredentialConfiguration credentials
+  ) throws Exception {
+    var allOrganizationsResponse = TaskwolfRequest.create(ALL_ORGANIZATION_LIST_URL,
+      "GET", new JSONObject("{}")).sendAuthorized(credentials.token());
+    return new JSONObject(allOrganizationsResponse.body())
+      .getJSONArray("organizations").toList().stream()
+      .map(organization -> (Map<String, String>) organization)
+      .collect(Collectors.toList());
   }
 }
