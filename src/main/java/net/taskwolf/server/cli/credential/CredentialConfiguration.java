@@ -20,9 +20,10 @@ public final class CredentialConfiguration extends Configuration {
   }
 
   public static CredentialConfiguration createAndStore(
-    String token, String device
+    String token, String refreshToken, String device
   ) throws Exception {
-    var configuration = new CredentialConfiguration(CONFIGURATION_PATH, token, device);
+    var configuration = new CredentialConfiguration(CONFIGURATION_PATH, token,
+      refreshToken, device);
     if (!configuration.exists()) {
       configuration.create();
     }
@@ -31,15 +32,19 @@ public final class CredentialConfiguration extends Configuration {
   }
 
   private String token;
+  private String refreshToken;
   private String device;
 
   private CredentialConfiguration(String path) {
     super(path);
   }
 
-  private CredentialConfiguration(String path, String token, String device) {
+  private CredentialConfiguration(
+    String path, String token, String refreshToken, String device
+  ) {
     super(path);
     this.token = token;
+    this.refreshToken = refreshToken;
     this.device = device;
   }
 
@@ -47,6 +52,7 @@ public final class CredentialConfiguration extends Configuration {
   protected JSONObject serialize() {
     var content = new JSONObject();
     content.put("token", token);
+    content.put("refreshToken", refreshToken);
     content.put("device", device);
     return content;
   }
@@ -54,6 +60,7 @@ public final class CredentialConfiguration extends Configuration {
   @Override
   protected void deserialize(JSONObject json) {
     token = json.getString("token");
+    refreshToken = json.getString("refreshToken");
     device = json.getString("device");
   }
 }

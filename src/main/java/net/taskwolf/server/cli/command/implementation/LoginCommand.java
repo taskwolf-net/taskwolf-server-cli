@@ -36,7 +36,9 @@ public final class LoginCommand extends Command {
       multiFactorAuthorization(email, password);
       return true;
     }
-    deviceLogin(verificationResult.get());
+    var responseBody = new JSONObject(verificationResult.get());
+    deviceLogin(responseBody.getString("productApiKey"),
+      responseBody.getString("refreshToken"));
     return true;
   }
 
@@ -55,7 +57,9 @@ public final class LoginCommand extends Command {
         "was incorrect. Please try the login again.");
       return;
     }
-    deviceLogin(verificationResult.get());
+    var responseBody = new JSONObject(verificationResult.get());
+    deviceLogin(responseBody.getString("productApiKey"),
+      responseBody.getString("refreshToken"));
   }
 
   private static final String VERIFICATION_LOGIN_URL =
@@ -73,18 +77,18 @@ public final class LoginCommand extends Command {
       return responseBody.getInt("error") == 1002 ? Optional.of("2FA") :
         Optional.empty();
     }
-    return Optional.of(responseBody.getString("productApiKey"));
+    return Optional.of(response.body());
   }
 
   private static final String DEVICE_LOGIN_URL =
     "https://api.taskwolf.net/v1/device/login/";
 
-  private void deviceLogin(String apiKey) throws Exception {
+  private void deviceLogin(String apiKey, String refreshToken) throws Exception {
     var localDeviceId = findLocalDeviceId();
     var response = TaskwolfRequest.create(DEVICE_LOGIN_URL, "POST",
       findDeviceInformation(localDeviceId)).sendAuthorized(apiKey);
     var decentralizedDeviceId = new JSONObject(response.body()).getString("id");
-    finishLogin(apiKey, localDeviceId, decentralizedDeviceId);
+    finishLogin(apiKey, refreshToken, localDeviceId, decentralizedDeviceId);
   }
 
   private JSONObject findDeviceInformation(String localDeviceId) throws Exception {
@@ -99,9 +103,11 @@ public final class LoginCommand extends Command {
   }
 
   private void finishLogin(
-    String apiKey, String localDeviceId, String decentralizedDeviceId
+    String apiKey, String refreshToken,
+    String localDeviceId, String decentralizedDeviceId
   ) throws Exception {
-    CredentialConfiguration.createAndStore(apiKey, decentralizedDeviceId);
+    CredentialConfiguration.createAndStore(apiKey, refreshToken,
+      decentralizedDeviceId);
     DeviceConfiguration.createAndStore(localDeviceId);
     Runtime.getRuntime().exec("systemctl daemon-reload");
     Runtime.getRuntime().exec("systemctl restart taskwolf.service");

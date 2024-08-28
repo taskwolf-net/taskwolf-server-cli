@@ -2,6 +2,7 @@ package net.taskwolf.server.cli.request;
 
 import com.google.common.collect.Maps;
 import lombok.RequiredArgsConstructor;
+import net.taskwolf.server.cli.credential.CredentialConfiguration;
 import net.taskwolf.server.cli.whitelist.WhitelistConfiguration;
 import org.json.JSONObject;
 
@@ -37,7 +38,31 @@ public final class TaskwolfRequest {
     if (whitelistConfiguration.enabled()) {
       requestBuilder.setHeader("WHITELIST-KEY", whitelistConfiguration.token());
     }
-    return httpClient.send(requestBuilder.build(),
+    var response = httpClient.send(requestBuilder.build(),
       HttpResponse.BodyHandlers.ofString());
+    if (response.statusCode() == 417) {
+      return refresh(headers);
+    }
+    return response;
+  }
+
+  private static final String REFRESH_URL =
+    "https://api.taskwolf.net/v1/verification/refresh/";
+
+  private HttpResponse<String> refresh(Map<String, String> headers) throws Exception {
+    var credentials = CredentialConfiguration.createAndLoad();
+    if (!credentials.exists()) {
+      throw new Exception("Authentication refresh failed.");
+    }
+    var response = TaskwolfRequest.create(REFRESH_URL, "POST",
+        new JSONObject(Map.of("refreshToken", credentials.refreshToken())))
+      .sendUnauthorized();
+    var responseBody = new JSONObject(response.body());
+    if (!responseBody.getBoolean("success")) {
+      throw new Exception("Authentication refresh failed.");
+    }
+    CredentialConfiguration.createAndStore(responseBody.getString("productApiKey"),
+      responseBody.getString("refreshToken"), credentials.device());
+    return send(headers);
   }
 }
