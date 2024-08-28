@@ -41,7 +41,7 @@ public final class TaskwolfRequest {
     var response = httpClient.send(requestBuilder.build(),
       HttpResponse.BodyHandlers.ofString());
     if (response.statusCode() == 417) {
-      return refresh(headers);
+      return refresh();
     }
     return response;
   }
@@ -49,7 +49,7 @@ public final class TaskwolfRequest {
   private static final String REFRESH_URL =
     "https://api.taskwolf.net/v1/verification/refresh/";
 
-  private HttpResponse<String> refresh(Map<String, String> headers) throws Exception {
+  private HttpResponse<String> refresh() throws Exception {
     var credentials = CredentialConfiguration.createAndLoad();
     if (!credentials.exists()) {
       throw new Exception("Authentication refresh failed.");
@@ -61,8 +61,10 @@ public final class TaskwolfRequest {
     if (!responseBody.getBoolean("success")) {
       throw new Exception("Authentication refresh failed.");
     }
-    CredentialConfiguration.createAndStore(responseBody.getString("productApiKey"),
-      responseBody.getString("refreshToken"), credentials.device());
-    return send(headers);
+    var token = responseBody.getString("productApiKey");
+    var refreshToken = responseBody.getString("refreshToken");
+    CredentialConfiguration.createAndStore(token, refreshToken,
+      credentials.device());
+    return send(Map.of("Authorization", "Bearer " + token));
   }
 }
