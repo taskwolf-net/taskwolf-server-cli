@@ -71,13 +71,26 @@ public final class LoginCommand extends Command {
     var requestBody = new JSONObject(Map.of("email", email, "password", password,
       "multiFactorCode", multiFactorCode.replaceAll(" ", "")));
     var response = TaskwolfRequest.create(VERIFICATION_LOGIN_URL, "POST", requestBody)
-      .sendUnauthorized();
+      .sendUnauthorized(imitateUserAgentHeader());
     var responseBody = new JSONObject(response.body());
     if (response.statusCode() != 200) {
       return responseBody.getInt("error") == 1002 ? Optional.of("2FA") :
         Optional.empty();
     }
     return Optional.of(response.body());
+  }
+
+  private Map<String, String> imitateUserAgentHeader() {
+    var operatingSystem = System.getProperty("os.name").toLowerCase();
+    var userAgent = "";
+    if (operatingSystem.contains("win")) {
+      userAgent = "WINDOWS";
+    } else if (operatingSystem.contains("nux")) {
+      userAgent = "X11";
+    } else if (operatingSystem.contains("mac")) {
+      userAgent = "MAC";
+    }
+    return Map.of("User-Agent", userAgent);
   }
 
   private static final String DEVICE_LOGIN_URL =

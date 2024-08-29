@@ -23,8 +23,23 @@ public final class TaskwolfRequest {
     return send(Maps.newHashMap());
   }
 
+  public HttpResponse<String> sendUnauthorized(
+    Map<String, String> headers
+  ) throws Exception {
+    return send(headers);
+  }
+
   public HttpResponse<String> sendAuthorized(String token) throws Exception {
     return send(Map.of("Authorization", "Bearer " + token));
+  }
+
+  public HttpResponse<String> sendAuthorized(
+    String token, Map<String, String> headers
+  ) throws Exception {
+    var combinedHeaders = Maps.<String, String>newHashMap();
+    combinedHeaders.put("Authorization", "Bearer " + token);
+    combinedHeaders.putAll(headers);
+    return send(combinedHeaders);
   }
 
   private HttpResponse<String> send(Map<String, String> headers) throws Exception {
