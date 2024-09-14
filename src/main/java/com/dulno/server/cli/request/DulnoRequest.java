@@ -1,9 +1,9 @@
-package net.taskwolf.server.cli.request;
+package com.dulno.server.cli.request;
 
+import com.dulno.server.cli.credential.CredentialConfiguration;
+import com.dulno.server.cli.whitelist.WhitelistConfiguration;
 import com.google.common.collect.Maps;
 import lombok.RequiredArgsConstructor;
-import net.taskwolf.server.cli.credential.CredentialConfiguration;
-import net.taskwolf.server.cli.whitelist.WhitelistConfiguration;
 import org.json.JSONObject;
 
 import java.net.URI;
@@ -13,7 +13,7 @@ import java.net.http.HttpResponse;
 import java.util.Map;
 
 @RequiredArgsConstructor(staticName = "create")
-public final class TaskwolfRequest {
+public final class DulnoRequest {
   private final String url;
   private final String method;
   private final JSONObject body;
@@ -62,14 +62,14 @@ public final class TaskwolfRequest {
   }
 
   private static final String REFRESH_URL =
-    "https://api.taskwolf.net/v1/verification/refresh/";
+    "https://api.dulno.com/v1/verification/refresh/";
 
   private HttpResponse<String> refresh() throws Exception {
     var credentials = CredentialConfiguration.createAndLoad();
     if (!credentials.exists()) {
       throw new Exception("Authentication refresh failed.");
     }
-    var response = TaskwolfRequest.create(REFRESH_URL, "POST",
+    var response = DulnoRequest.create(REFRESH_URL, "POST",
         new JSONObject(Map.of("refreshToken", credentials.refreshToken())))
       .sendUnauthorized();
     var responseBody = new JSONObject(response.body());

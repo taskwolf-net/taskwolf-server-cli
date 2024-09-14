@@ -1,4 +1,4 @@
-package net.taskwolf.server.cli.command;
+package com.dulno.server.cli.command;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;

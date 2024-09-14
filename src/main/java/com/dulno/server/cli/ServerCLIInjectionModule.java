@@ -1,8 +1,8 @@
-package net.taskwolf.server.cli;
+package com.dulno.server.cli;
 
 import com.google.inject.AbstractModule;
 import lombok.RequiredArgsConstructor;
-import net.taskwolf.server.cli.command.CommandInjectionModule;
+import com.dulno.server.cli.command.CommandInjectionModule;
 
 @RequiredArgsConstructor(staticName = "create")
 public final class ServerCLIInjectionModule extends AbstractModule {

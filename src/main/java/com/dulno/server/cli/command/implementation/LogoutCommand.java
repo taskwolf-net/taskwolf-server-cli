@@ -1,9 +1,9 @@
-package net.taskwolf.server.cli.command.implementation;
+package com.dulno.server.cli.command.implementation;
 
+import com.dulno.server.cli.command.Command;
+import com.dulno.server.cli.credential.CredentialConfiguration;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import net.taskwolf.server.cli.command.Command;
-import net.taskwolf.server.cli.credential.CredentialConfiguration;
 
 @Singleton
 public final class LogoutCommand extends Command {
@@ -21,7 +21,7 @@ public final class LogoutCommand extends Command {
     }
     credentials.delete();
     Runtime.getRuntime().exec("systemctl daemon-reload");
-    Runtime.getRuntime().exec("systemctl restart taskwolf.service");
+    Runtime.getRuntime().exec("systemctl restart dulno.service");
     System.out.println("The logout process was successful.");
     return true;
   }

@@ -1,4 +1,4 @@
-package net.taskwolf.server.cli.command;
+package com.dulno.server.cli.command;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Singleton;

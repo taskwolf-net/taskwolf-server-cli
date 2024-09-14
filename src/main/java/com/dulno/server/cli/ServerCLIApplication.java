@@ -1,10 +1,11 @@
-package net.taskwolf.server.cli;
+package com.dulno.server.cli;
 
+import com.dulno.server.cli.command.implementation.*;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import net.taskwolf.server.cli.command.Command;
-import net.taskwolf.server.cli.command.CommandRegistry;
-import net.taskwolf.server.cli.command.implementation.*;
+import com.dulno.server.cli.command.Command;
+import com.dulno.server.cli.command.CommandRegistry;
+import com.dulno.server.cli.command.implementation.*;
 
 import java.io.File;
 
@@ -69,7 +70,7 @@ public class ServerCLIApplication {
   }
 
   private static boolean checkPermission() {
-    var file = new File("/usr/local/taskwolf/test");
+    var file = new File("/usr/local/dulno/test");
     if (!file.mkdirs()) {
       System.out.println("Permission denied.");
       return false;

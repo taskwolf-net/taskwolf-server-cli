@@ -1,10 +1,10 @@
-package net.taskwolf.server.cli.command.implementation;
+package com.dulno.server.cli.command.implementation;
 
+import com.dulno.server.cli.command.Command;
+import com.dulno.server.cli.credential.CredentialConfiguration;
+import com.dulno.server.cli.request.DulnoRequest;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import net.taskwolf.server.cli.command.Command;
-import net.taskwolf.server.cli.credential.CredentialConfiguration;
-import net.taskwolf.server.cli.request.TaskwolfRequest;
 import org.json.JSONObject;
 
 import java.util.Map;
@@ -28,7 +28,7 @@ public final class CommandCommand extends Command {
   }
 
   private static final String COMMAND_SETTINGS_URL =
-    "https://api.taskwolf.net/v1/device/command/settings/update/";
+    "https://api.dulno.com/v1/device/command/settings/update/";
 
   private boolean processEnableCommand(String[] arguments) throws Exception {
     if (arguments.length != 2) {
@@ -46,7 +46,7 @@ public final class CommandCommand extends Command {
     }
     var requestBody = Map.of("device", credentials.device(),
       "commandExecution", enabled);
-    TaskwolfRequest.create(COMMAND_SETTINGS_URL, "POST", new JSONObject(requestBody))
+    DulnoRequest.create(COMMAND_SETTINGS_URL, "POST", new JSONObject(requestBody))
       .sendAuthorized(credentials.token());
     System.out.println("The command settings were successfully updated");
     return true;
