@@ -1,11 +1,11 @@
 package com.dulno.server.cli.command.implementation;
 
 import com.dulno.server.cli.command.Command;
-import com.dulno.server.cli.credential.CredentialConfiguration;
+import com.dulno.server.service.credential.CredentialConfiguration;
 import com.dulno.server.cli.device.DeviceConfiguration;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.dulno.server.cli.request.DulnoRequest;
+import com.dulno.server.service.request.DulnoRequest;
 import org.json.JSONObject;
 
 import java.net.InetAddress;

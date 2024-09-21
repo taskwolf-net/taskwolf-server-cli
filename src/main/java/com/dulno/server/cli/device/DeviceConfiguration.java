@@ -2,7 +2,7 @@ package com.dulno.server.cli.device;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import com.dulno.server.cli.configuration.Configuration;
+import com.dulno.server.service.configuration.Configuration;
 import org.json.JSONObject;
 
 @Getter

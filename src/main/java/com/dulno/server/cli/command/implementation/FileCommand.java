@@ -1,8 +1,9 @@
 package com.dulno.server.cli.command.implementation;
 
 import com.dulno.server.cli.command.Command;
-import com.dulno.server.cli.credential.CredentialConfiguration;
-import com.dulno.server.cli.request.DulnoRequest;
+import com.dulno.server.service.credential.CredentialConfiguration;
+import com.dulno.server.service.file.FileConfiguration;
+import com.dulno.server.service.request.DulnoRequest;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.json.JSONObject;
@@ -49,6 +50,7 @@ public final class FileCommand extends Command {
       "folderCreate", enabled, "folderDelete", enabled);
     DulnoRequest.create(FILE_SETTINGS_URL, "POST", new JSONObject(requestBody))
       .sendAuthorized(credentials.token());
+    FileConfiguration.createAndStore(Boolean.parseBoolean(enabled));
     System.out.println("The file settings were successfully updated");
     return true;
   }

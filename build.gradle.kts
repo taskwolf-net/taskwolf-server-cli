@@ -9,11 +9,24 @@ java.targetCompatibility = JavaVersion.VERSION_11
 
 repositories {
   mavenCentral()
+  maven {
+    url = uri("https://git.dulno.com/api/v4/projects/26/packages/maven")
+    credentials(HttpHeaderCredentials::class) {
+      name = "Private-Token"
+      value = System.getenv("DULNO_GITLAB_PRIVATE_TOKEN") ?:
+        findProperty("dulnoGitlabPrivateToken") as String?
+    }
+    authentication {
+      create("header", HttpHeaderAuthentication::class)
+    }
+  }
 }
 
 dependencies {
   testImplementation(platform("org.junit:junit-bom:5.10.2"))
   testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
+
+  implementation("com.dulno:server-service:1.0.0-SNAPSHOT")
 
   implementation("com.google.inject:guice:7.0.0")
 

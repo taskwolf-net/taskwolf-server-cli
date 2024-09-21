@@ -1,9 +1,11 @@
 package com.dulno.server.cli.command.implementation;
 
 import com.dulno.server.cli.command.Command;
-import com.dulno.server.cli.credential.CredentialConfiguration;
+import com.dulno.server.service.command.CommandConfiguration;
+import com.dulno.server.service.credential.CredentialConfiguration;
 import com.dulno.server.cli.device.DeviceConfiguration;
-import com.dulno.server.cli.request.DulnoRequest;
+import com.dulno.server.service.file.FileConfiguration;
+import com.dulno.server.service.request.DulnoRequest;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.json.JSONObject;
@@ -62,6 +64,8 @@ public final class DeleteCommand extends Command {
   private void finishDeletion() throws Exception {
     CredentialConfiguration.createAndLoad().delete();
     DeviceConfiguration.createAndLoad().delete();
+    FileConfiguration.createAndLoad().delete();
+    CommandConfiguration.createAndLoad().delete();
     Runtime.getRuntime().exec("systemctl daemon-reload");
     Runtime.getRuntime().exec("systemctl restart dulno.service");
     System.out.println("The deletion process was successful.");
