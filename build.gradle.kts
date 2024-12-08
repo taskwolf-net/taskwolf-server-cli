@@ -38,7 +38,7 @@ dependencies {
   testAnnotationProcessor("org.projectlombok:lombok:1.18.32")
 
   implementation("org.json:json:20240303")
-  implementation("commons-io:commons-io:2.16.1")
+  implementation("commons-io:commons-io:2.18.0")
 }
 
 tasks.test {
