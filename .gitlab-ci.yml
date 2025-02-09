@@ -1,11 +1,43 @@
-image: openjdk:21
+stages:
+  - build
+  - publish
+  - deploy
 
-before_script:
-  - GRADLE_USER_HOME="$(pwd)/.gradle"
-  - export GRADLE_USER_HOME
-  - export DULNO_GITLAB_PRIVATE_TOKEN="$DULNO_GITLAB_PRIVATE_TOKEN"
+variables:
+  DOCKER_IMAGE: "dulno-server-cli"
 
 build:
   stage: build
+  image: gradle:8.12.0-jdk11
   script:
-    - ./gradlew assemble
+    - gradle jar
+  artifacts:
+    paths:
+      - build/libs/
+    expire_in: 1 day
+
+publish:
+  stage: publish
+  image: docker:cli
+  services:
+    - docker:dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+    DOCKER_DRIVER: overlay2
+  dependencies:
+    - build
+  script:
+    - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin $DOCKER_REGISTRY
+    - docker build -t $DOCKER_REGISTRY/$DOCKER_IMAGE:latest .
+    - docker push $DOCKER_REGISTRY/$DOCKER_IMAGE:latest
+  only:
+    - master
+
+deploy:
+  stage: deploy
+  trigger:
+    project: $APT_PIPELINE_PROJECT
+    branch: $APT_PIPELINE_BRANCH
+  only:
+    - master
