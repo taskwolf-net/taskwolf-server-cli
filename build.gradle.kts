@@ -23,8 +23,8 @@ repositories {
 }
 
 dependencies {
-  testImplementation(platform("org.junit:junit-bom:5.11.4"))
-  testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
+  testImplementation(platform("org.junit:junit-bom:5.12.0"))
+  testImplementation("org.junit.jupiter:junit-jupiter:5.12.0")
 
   implementation("com.dulno:server-service:1.0.0-SNAPSHOT")
 
