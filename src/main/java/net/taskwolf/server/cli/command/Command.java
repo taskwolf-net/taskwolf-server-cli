@@ -1,4 +1,4 @@
-package com.dulno.server.cli.command;
+package net.taskwolf.server.cli.command;
 
 import lombok.AccessLevel;
 import lombok.Getter;

@@ -1,6 +1,6 @@
-package com.dulno.server.cli.command.implementation;
+package net.taskwolf.server.cli.command.implementation;
 
-import com.dulno.server.cli.command.Command;
+import net.taskwolf.server.cli.command.Command;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -14,7 +14,7 @@ public final class VersionCommand extends Command {
   @Override
   public boolean execute(String[] arguments) {
     System.out.println();
-    System.out.println("Dulno CLI Version 1.0.0");
+    System.out.println("Taskwolf CLI Version 1.0.0");
     System.out.println();
     return true;
   }

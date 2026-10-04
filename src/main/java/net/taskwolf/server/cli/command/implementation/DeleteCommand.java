@@ -1,11 +1,11 @@
-package com.dulno.server.cli.command.implementation;
+package net.taskwolf.server.cli.command.implementation;
 
-import com.dulno.server.cli.command.Command;
-import com.dulno.server.service.command.CommandConfiguration;
-import com.dulno.server.service.credential.CredentialConfiguration;
-import com.dulno.server.cli.device.DeviceConfiguration;
-import com.dulno.server.service.file.FileConfiguration;
-import com.dulno.server.service.request.DulnoRequest;
+import net.taskwolf.server.cli.command.Command;
+import net.taskwolf.server.service.command.CommandConfiguration;
+import net.taskwolf.server.service.credential.CredentialConfiguration;
+import net.taskwolf.server.cli.device.DeviceConfiguration;
+import net.taskwolf.server.service.file.FileConfiguration;
+import net.taskwolf.server.service.request.TaskwolfRequest;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.json.JSONObject;
@@ -35,7 +35,7 @@ public final class DeleteCommand extends Command {
         "this, you can continue.");
     System.out.println();
     System.out.println("To make sure that you are really the owner of this " +
-      "device, we ask you to enter your Dulno account password.");
+      "device, we ask you to enter your Taskwolf account password.");
     System.out.println();
     var password = new String(console.readPassword("Password: "));
     deleteDevice(credentials, password);
@@ -43,13 +43,13 @@ public final class DeleteCommand extends Command {
   }
 
   private static final String DEVICE_DELETE_URL =
-    "https://api.dulno.com/v1/device/delete/";
+    "https://api.taskwolf.net/v1/device/delete/";
 
   private boolean deleteDevice(
     CredentialConfiguration credentials, String password
   ) throws Exception {
     var requestBody = Map.of("device", credentials.device(), "password", password);
-    var response = DulnoRequest.create(DEVICE_DELETE_URL, "POST",
+    var response = TaskwolfRequest.create(DEVICE_DELETE_URL, "POST",
       new JSONObject(requestBody)).sendAuthorized(credentials.token());
     var success = new JSONObject(response.body()).getBoolean("success");
     if (!success) {
@@ -67,7 +67,7 @@ public final class DeleteCommand extends Command {
     FileConfiguration.createAndLoad().delete();
     CommandConfiguration.createAndLoad().delete();
     Runtime.getRuntime().exec("systemctl daemon-reload");
-    Runtime.getRuntime().exec("systemctl restart dulno.service");
+    Runtime.getRuntime().exec("systemctl restart taskwolf.service");
     System.out.println("The deletion process was successful.");
   }
 }

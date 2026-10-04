@@ -1,6 +1,6 @@
-package com.dulno.server.cli.command.implementation;
+package net.taskwolf.server.cli.command.implementation;
 
-import com.dulno.server.cli.command.Command;
+import net.taskwolf.server.cli.command.Command;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -19,10 +19,10 @@ public final class HelpCommand extends Command {
     System.out.println("Commands: ");
     System.out.println("  help - Shows you the list of all available commands");
     System.out.println("  version - Displays the currently installed version " +
-      "of the Dulno CLI");
+      "of the Taskwolf CLI");
     System.out.println("  login - Used to connect the device to your " +
-      "Dulno account");
-    System.out.println("  logout - Logs the device out of Dulno");
+      "Taskwolf account");
+    System.out.println("  logout - Logs the device out of Taskwolf");
     System.out.println("  organization - You can use the command to manage the " +
       "availability of the device for your organizations");
     System.out.println("  command - Controls the execution of commands on" +
@@ -31,10 +31,10 @@ public final class HelpCommand extends Command {
     System.out.println("  workspace - You can use this command to control " +
       "the workspaces of the device");
     System.out.println("  delete - This command deletes this device from " +
-      "Dulno and it is no longer available for automation");
+      "Taskwolf and it is no longer available for automation");
     System.out.println();
     System.out.println("Usage:");
-    System.out.println("  dulno [COMMAND]");
+    System.out.println("  taskwolf [COMMAND]");
     System.out.println();
     return true;
   }

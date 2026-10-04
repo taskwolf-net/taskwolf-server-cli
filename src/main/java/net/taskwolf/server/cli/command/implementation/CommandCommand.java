@@ -1,9 +1,9 @@
-package com.dulno.server.cli.command.implementation;
+package net.taskwolf.server.cli.command.implementation;
 
-import com.dulno.server.cli.command.Command;
-import com.dulno.server.service.credential.CredentialConfiguration;
-import com.dulno.server.service.file.FileConfiguration;
-import com.dulno.server.service.request.DulnoRequest;
+import net.taskwolf.server.cli.command.Command;
+import net.taskwolf.server.service.command.CommandConfiguration;
+import net.taskwolf.server.service.credential.CredentialConfiguration;
+import net.taskwolf.server.service.request.TaskwolfRequest;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.json.JSONObject;
@@ -11,10 +11,10 @@ import org.json.JSONObject;
 import java.util.Map;
 
 @Singleton
-public final class FileCommand extends Command {
+public final class CommandCommand extends Command {
   @Inject
-  private FileCommand() {
-    super("file", new String[] {"files"}, new String[] {"enable <true / false>"});
+  private CommandCommand() {
+    super("command", new String[] {"commands"}, new String[] {"enable <true / false>"});
   }
 
   @Override
@@ -28,8 +28,8 @@ public final class FileCommand extends Command {
     return false;
   }
 
-  private static final String FILE_SETTINGS_URL =
-    "https://api.dulno.com/v1/device/file/settings/update/";
+  private static final String COMMAND_SETTINGS_URL =
+    "https://api.taskwolf.net/v1/device/command/settings/update/";
 
   private boolean processEnableCommand(String[] arguments) throws Exception {
     if (arguments.length != 2) {
@@ -46,12 +46,11 @@ public final class FileCommand extends Command {
       return true;
     }
     var requestBody = Map.of("device", credentials.device(),
-      "fileStorage", enabled, "fileInfo", enabled, "fileDelete", enabled,
-      "folderCreate", enabled, "folderDelete", enabled);
-    DulnoRequest.create(FILE_SETTINGS_URL, "POST", new JSONObject(requestBody))
+      "commandExecution", enabled);
+    TaskwolfRequest.create(COMMAND_SETTINGS_URL, "POST", new JSONObject(requestBody))
       .sendAuthorized(credentials.token());
-    FileConfiguration.createAndStore(Boolean.parseBoolean(enabled));
-    System.out.println("The file settings were successfully updated");
+    CommandConfiguration.createAndStore(Boolean.parseBoolean(enabled));
+    System.out.println("The command settings were successfully updated");
     return true;
   }
 }

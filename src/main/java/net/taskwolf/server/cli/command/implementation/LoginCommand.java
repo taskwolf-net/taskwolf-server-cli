@@ -1,11 +1,11 @@
-package com.dulno.server.cli.command.implementation;
+package net.taskwolf.server.cli.command.implementation;
 
-import com.dulno.server.cli.command.Command;
-import com.dulno.server.service.credential.CredentialConfiguration;
-import com.dulno.server.cli.device.DeviceConfiguration;
+import net.taskwolf.server.cli.command.Command;
+import net.taskwolf.server.service.credential.CredentialConfiguration;
+import net.taskwolf.server.cli.device.DeviceConfiguration;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.dulno.server.service.request.DulnoRequest;
+import net.taskwolf.server.service.request.TaskwolfRequest;
 import org.json.JSONObject;
 
 import java.net.InetAddress;
@@ -22,7 +22,7 @@ public final class LoginCommand extends Command {
 
   @Override
   public boolean execute(String[] arguments) throws Exception {
-    System.out.println("Dulno login");
+    System.out.println("Taskwolf login");
     System.out.println();
     var email = System.console().readLine("Email: ");
     var password = new String(System.console().readPassword("Password: "));
@@ -63,14 +63,14 @@ public final class LoginCommand extends Command {
   }
 
   private static final String VERIFICATION_LOGIN_URL =
-    "https://api.dulno.com/v1/verification/login/";
+    "https://api.taskwolf.net/v1/verification/login/";
 
   private Optional<String> verificationLogin(
     String email, String password, String multiFactorCode
   ) throws Exception {
     var requestBody = new JSONObject(Map.of("email", email, "password", password,
       "multiFactorCode", multiFactorCode.replaceAll(" ", "")));
-    var response = DulnoRequest.create(VERIFICATION_LOGIN_URL, "POST", requestBody)
+    var response = TaskwolfRequest.create(VERIFICATION_LOGIN_URL, "POST", requestBody)
       .sendUnauthorized(imitateUserAgentHeader());
     var responseBody = new JSONObject(response.body());
     if (response.statusCode() != 200) {
@@ -94,11 +94,11 @@ public final class LoginCommand extends Command {
   }
 
   private static final String DEVICE_LOGIN_URL =
-    "https://api.dulno.com/v1/device/login/";
+    "https://api.taskwolf.net/v1/device/login/";
 
   private void deviceLogin(String apiKey, String refreshToken) throws Exception {
     var localDeviceId = findLocalDeviceId();
-    var response = DulnoRequest.create(DEVICE_LOGIN_URL, "POST",
+    var response = TaskwolfRequest.create(DEVICE_LOGIN_URL, "POST",
       findDeviceInformation(localDeviceId)).sendAuthorized(apiKey);
     var decentralizedDeviceId = new JSONObject(response.body()).getString("id");
     finishLogin(apiKey, refreshToken, localDeviceId, decentralizedDeviceId);
@@ -123,7 +123,7 @@ public final class LoginCommand extends Command {
       decentralizedDeviceId);
     DeviceConfiguration.createAndStore(localDeviceId);
     Runtime.getRuntime().exec("systemctl daemon-reload");
-    Runtime.getRuntime().exec("systemctl restart dulno.service");
+    Runtime.getRuntime().exec("systemctl restart taskwolf.service");
     System.out.println("The verification process was successful.");
   }
 }

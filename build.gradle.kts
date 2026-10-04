@@ -2,7 +2,7 @@ plugins {
   id("java")
 }
 
-group = "com.dulno"
+group = "net.taskwolf"
 version = "1.0.0-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
 java.targetCompatibility = JavaVersion.VERSION_11
@@ -16,7 +16,7 @@ dependencies {
   testImplementation(platform("org.junit:junit-bom:5.12.0"))
   testImplementation("org.junit.jupiter:junit-jupiter:5.12.0")
 
-  implementation("com.dulno:server-service:1.0.0-SNAPSHOT")
+  implementation("net.taskwolf:server-service:1.0.0-SNAPSHOT")
 
   implementation("com.google.inject:guice:7.0.0")
 
@@ -36,7 +36,7 @@ tasks.test {
 }
 
 tasks.jar {
-  manifest.attributes["Main-Class"] = "com.dulno.server.cli.ServerCLIApplication"
+  manifest.attributes["Main-Class"] = "net.taskwolf.server.cli.ServerCLIApplication"
   val dependencies = configurations
     .runtimeClasspath
     .get()

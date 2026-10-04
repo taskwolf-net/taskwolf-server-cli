@@ -1,4 +1,4 @@
-# Dulno - Server - CLI
+# Taskwolf - Server - CLI
 
 [![CI](https://github.com/taskwolf-net/taskwolf-server-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/taskwolf-net/taskwolf-server-cli/actions/workflows/ci.yml)
 

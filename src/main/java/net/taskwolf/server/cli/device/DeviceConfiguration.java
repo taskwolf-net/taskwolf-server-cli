@@ -1,8 +1,8 @@
-package com.dulno.server.cli.device;
+package net.taskwolf.server.cli.device;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import com.dulno.server.service.configuration.Configuration;
+import net.taskwolf.server.service.configuration.Configuration;
 import org.json.JSONObject;
 
 @Getter

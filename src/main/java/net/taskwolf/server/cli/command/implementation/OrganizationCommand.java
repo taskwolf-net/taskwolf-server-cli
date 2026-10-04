@@ -1,11 +1,11 @@
-package com.dulno.server.cli.command.implementation;
+package net.taskwolf.server.cli.command.implementation;
 
-import com.dulno.server.cli.command.Command;
-import com.dulno.server.service.credential.CredentialConfiguration;
+import net.taskwolf.server.cli.command.Command;
+import net.taskwolf.server.service.credential.CredentialConfiguration;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.dulno.server.service.request.DulnoRequest;
+import net.taskwolf.server.service.request.TaskwolfRequest;
 import org.json.JSONObject;
 
 import java.util.*;
@@ -134,13 +134,13 @@ public final class OrganizationCommand extends Command {
   }
 
   private static final String ORGANIZATION_ADD_URL =
-    "https://api.dulno.com/v1/device/organization/add/";
+    "https://api.taskwolf.net/v1/device/organization/add/";
 
   private void addOrganization(String organizationId, String teamId) throws Exception {
     var credentials = CredentialConfiguration.createAndLoad();
     var requestBody = Map.of("device", credentials.device(),
       "organization", organizationId, "team", teamId);
-    DulnoRequest.create(ORGANIZATION_ADD_URL, "POST",
+    TaskwolfRequest.create(ORGANIZATION_ADD_URL, "POST",
       new JSONObject(requestBody)).sendAuthorized(credentials.token());
   }
 
@@ -205,14 +205,14 @@ public final class OrganizationCommand extends Command {
   }
 
   private static final String ORGANIZATION_REMOVE_URL =
-    "https://api.dulno.com/v1/device/organization/remove/";
+    "https://api.taskwolf.net/v1/device/organization/remove/";
 
   private void removeOrganization(
     CredentialConfiguration credentials, String organizationId, String teamId
   ) throws Exception {
     var requestBody = Map.of("device", credentials.device(),
       "organization", organizationId, "team", teamId);
-    DulnoRequest.create(ORGANIZATION_REMOVE_URL, "POST",
+    TaskwolfRequest.create(ORGANIZATION_REMOVE_URL, "POST",
       new JSONObject(requestBody)).sendAuthorized(credentials.token());
   }
 
@@ -238,12 +238,12 @@ public final class OrganizationCommand extends Command {
   }
 
   private static final String DEVICE_USER_LIST_URL =
-    "https://api.dulno.com/v1/device/users/";
+    "https://api.taskwolf.net/v1/device/users/";
 
   private List<Map<String, String>> findDeviceUsers(
     CredentialConfiguration credentials
   ) throws Exception {
-    var response = DulnoRequest.create(DEVICE_USER_LIST_URL,
+    var response = TaskwolfRequest.create(DEVICE_USER_LIST_URL,
         "POST", new JSONObject(Map.of("device", credentials.device())))
       .sendAuthorized(credentials.token());
     return new JSONObject(response.body())
@@ -253,12 +253,12 @@ public final class OrganizationCommand extends Command {
   }
 
   private static final String ALL_ORGANIZATION_LIST_URL =
-    "https://api.dulno.com/v1/organizations/all/";
+    "https://api.taskwolf.net/v1/organizations/all/";
 
   private List<Map<String, String>> findAllOrganizations(
     CredentialConfiguration credentials
   ) throws Exception {
-    var response = DulnoRequest.create(ALL_ORGANIZATION_LIST_URL,
+    var response = TaskwolfRequest.create(ALL_ORGANIZATION_LIST_URL,
       "GET", new JSONObject("{}")).sendAuthorized(credentials.token());
     return new JSONObject(response.body())
       .getJSONArray("organizations").toList().stream()
@@ -267,12 +267,12 @@ public final class OrganizationCommand extends Command {
   }
 
   private static final String ORGANIZATION_TEAMS_URL =
-    "https://api.dulno.com/v1/organization/team/targets/find/";
+    "https://api.taskwolf.net/v1/organization/team/targets/find/";
 
   private List<Map<String, String>> findOrganizationTeams(
     CredentialConfiguration credentials, String organization
   ) throws Exception {
-    var response = DulnoRequest.create(ORGANIZATION_TEAMS_URL,
+    var response = TaskwolfRequest.create(ORGANIZATION_TEAMS_URL,
       "POST", new JSONObject(Map.of("organization", organization)))
       .sendAuthorized(credentials.token());
     var teams = new JSONObject(response.body())

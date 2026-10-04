@@ -1,8 +1,8 @@
-package com.dulno.server.cli.command.implementation;
+package net.taskwolf.server.cli.command.implementation;
 
-import com.dulno.server.cli.command.Command;
-import com.dulno.server.service.credential.CredentialConfiguration;
-import com.dulno.server.service.request.DulnoRequest;
+import net.taskwolf.server.cli.command.Command;
+import net.taskwolf.server.service.credential.CredentialConfiguration;
+import net.taskwolf.server.service.request.TaskwolfRequest;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.json.JSONObject;
@@ -36,7 +36,7 @@ public final class WorkspaceCommand extends Command {
   }
 
   private static final String WORKSPACE_LIST_URL =
-    "https://api.dulno.com/v1/device/file/workspaces/find/";
+    "https://api.taskwolf.net/v1/device/file/workspaces/find/";
 
   private boolean listWorkspaces() throws Exception {
     var credentials = CredentialConfiguration.createAndLoad();
@@ -46,7 +46,7 @@ public final class WorkspaceCommand extends Command {
       return true;
     }
     var requestBody = Map.of("device", credentials.device());
-    var response = DulnoRequest.create(WORKSPACE_LIST_URL, "POST",
+    var response = TaskwolfRequest.create(WORKSPACE_LIST_URL, "POST",
       new JSONObject(requestBody)).sendAuthorized(credentials.token());
     var workspaces = new JSONObject(response.body()).getJSONArray("workspaces");
     if (workspaces.isEmpty()) {
@@ -61,7 +61,7 @@ public final class WorkspaceCommand extends Command {
   }
 
   private static final String WORKSPACE_ADD_URL =
-    "https://api.dulno.com/v1/device/file/workspace/create/";
+    "https://api.taskwolf.net/v1/device/file/workspace/create/";
 
   private boolean addWorkspace(String[] arguments) throws Exception {
     if (arguments.length != 2) {
@@ -75,14 +75,14 @@ public final class WorkspaceCommand extends Command {
       return true;
     }
     var requestBody = Map.of("device", credentials.device(), "path", path);
-    DulnoRequest.create(WORKSPACE_ADD_URL, "POST", new JSONObject(requestBody))
+    TaskwolfRequest.create(WORKSPACE_ADD_URL, "POST", new JSONObject(requestBody))
       .sendAuthorized(credentials.token());
     System.out.println("The workspace was successfully created");
     return true;
   }
 
   private static final String WORKSPACE_REMOVE_URL =
-    "https://api.dulno.com/v1/device/file/workspace/remove/";
+    "https://api.taskwolf.net/v1/device/file/workspace/remove/";
 
   private boolean removeWorkspace(String[] arguments) throws Exception {
     if (arguments.length != 2) {
@@ -101,7 +101,7 @@ public final class WorkspaceCommand extends Command {
     } else {
       var deleteRequestBody = Map.of("device", credentials.device(),
         "workspace", target.get());
-      DulnoRequest.create(WORKSPACE_REMOVE_URL, "POST",
+      TaskwolfRequest.create(WORKSPACE_REMOVE_URL, "POST",
         new JSONObject(deleteRequestBody)).sendAuthorized(credentials.token());
       System.out.println("The selected workspace has been successfully removed.");
     }
@@ -112,7 +112,7 @@ public final class WorkspaceCommand extends Command {
     CredentialConfiguration credentials, String path
   ) throws Exception {
     var findRequestBody = Map.of("device", credentials.device());
-    var findResponse = DulnoRequest.create(WORKSPACE_LIST_URL, "POST",
+    var findResponse = TaskwolfRequest.create(WORKSPACE_LIST_URL, "POST",
       new JSONObject(findRequestBody)).sendAuthorized(credentials.token());
     var workspaces = new JSONObject(findResponse.body()).getJSONArray("workspaces");
     return workspaces.toList().stream()
