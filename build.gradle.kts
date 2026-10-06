@@ -13,22 +13,22 @@ repositories {
 }
 
 dependencies {
-  testImplementation(platform("org.junit:junit-bom:5.12.0"))
-  testImplementation("org.junit.jupiter:junit-jupiter:5.12.0")
+  testImplementation(platform("org.junit:junit-bom:6.1.3"))
+  testImplementation("org.junit.jupiter:junit-jupiter:6.1.3")
 
   implementation("net.taskwolf:server-service:1.0.0-SNAPSHOT")
 
   implementation("com.google.inject:guice:7.0.0")
 
-  implementation("com.google.guava:guava:33.4.0-jre")
+  implementation("com.google.guava:guava:33.7.2-jre")
 
-  implementation("org.projectlombok:lombok:1.18.36")
-  annotationProcessor("org.projectlombok:lombok:1.18.36")
-  testImplementation("org.projectlombok:lombok:1.18.36")
-  testAnnotationProcessor("org.projectlombok:lombok:1.18.36")
+  implementation("org.projectlombok:lombok:1.18.48")
+  annotationProcessor("org.projectlombok:lombok:1.18.48")
+  testImplementation("org.projectlombok:lombok:1.18.48")
+  testAnnotationProcessor("org.projectlombok:lombok:1.18.48")
 
-  implementation("org.json:json:20250107")
-  implementation("commons-io:commons-io:2.18.0")
+  implementation("org.json:json:20260814")
+  implementation("commons-io:commons-io:2.22.0")
 }
 
 tasks.test {
